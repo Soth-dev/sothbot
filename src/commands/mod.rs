@@ -1,7 +1,8 @@
-pub mod start;
-pub mod help;
+pub mod ai;
 pub mod echo;
+pub mod help;
 pub mod joke;
+pub mod start;
 
 use teloxide::prelude::*;
 use teloxide::utils::command::BotCommands;
@@ -12,7 +13,8 @@ pub enum Command {
     Start,
     Help,
     Echo,
-    Joke
+    Joke,
+    Ai,
 }
 
 pub async fn command_router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
@@ -21,5 +23,6 @@ pub async fn command_router(bot: Bot, msg: Message, cmd: Command) -> ResponseRes
         Command::Help => help::run(bot, msg).await,
         Command::Echo => echo::run(bot, msg).await,
         Command::Joke => joke::run(bot, msg).await,
+        Command::Ai => ai::run(bot, msg).await,
     }
 }
