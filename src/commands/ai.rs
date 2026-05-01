@@ -1,6 +1,9 @@
 use gemini_rust::{ClientError::BadResponse, Gemini, Model};
 use std::{env, sync::LazyLock};
-use teloxide::{prelude::*, types::ReplyParameters};
+use teloxide::{
+    prelude::*,
+    types::{ParseMode, ReplyParameters},
+};
 
 static GEMINI_CLIENT: LazyLock<Gemini> = LazyLock::new(|| {
     Gemini::with_model(env::var("GEMINI_API_KEY").unwrap(), Model::Gemini3Flash).unwrap()
@@ -43,6 +46,7 @@ pub async fn run(bot: Bot, msg: Message) -> ResponseResult<()> {
     };
 
     bot.send_message(msg.chat.id, response)
+        .parse_mode(ParseMode::MarkdownV2)
         .reply_parameters(ReplyParameters::new(msg.id))
         .await?;
     Ok(())
