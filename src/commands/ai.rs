@@ -1,13 +1,16 @@
+use dotenvy::dotenv;
 use gemini_rust::{ClientError::BadResponse, Gemini, Model};
-use std::{env, sync::LazyLock};
+use std::env;
 use teloxide::{
     prelude::*,
     types::{ParseMode, ReplyParameters},
 };
 
-static GEMINI_CLIENT: LazyLock<Gemini> = LazyLock::new(|| {
+#[ctor::ctor]
+static GEMINI_CLIENT: Gemini = {
+    dotenv().unwrap();
     Gemini::with_model(env::var("GEMINI_API_KEY").unwrap(), Model::Gemini3Flash).unwrap()
-});
+};
 
 pub async fn run(bot: Bot, msg: Message) -> ResponseResult<()> {
     let text = msg.text().unwrap_or("").replacen("/ai", "", 1);
