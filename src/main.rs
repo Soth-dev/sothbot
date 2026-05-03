@@ -1,19 +1,24 @@
 mod commands;
+pub mod func;
 
-use teloxide::prelude::*;
-use dotenvy::dotenv;
 use commands::{Command, command_router};
+use dotenvy::dotenv;
+use teloxide::prelude::*;
 
 #[tokio::main]
 async fn main() {
     dotenv().ok();
 
     pretty_env_logger::init();
-    log::info!("Starting throw dice bot...");
+    log::info!("Starting bot...");
 
     let bot: Bot = Bot::from_env();
 
-    let handler: Handler<'_, Result<(), teloxide::RequestError>, teloxide::dispatching::DpHandlerDescription> = Update::filter_message()
+    let handler: Handler<
+        '_,
+        Result<(), teloxide::RequestError>,
+        teloxide::dispatching::DpHandlerDescription,
+    > = Update::filter_message()
         .filter_command::<Command>()
         .endpoint(command_router);
 
@@ -23,4 +28,3 @@ async fn main() {
         .dispatch()
         .await;
 }
-

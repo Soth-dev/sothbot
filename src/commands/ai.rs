@@ -1,3 +1,4 @@
+use crate::func::{m, q};
 use dotenvy::dotenv;
 use gemini_rust::{ClientError::BadResponse, Gemini, Model};
 use std::env;
@@ -12,14 +13,18 @@ static GEMINI_CLIENT: Gemini = {
     Gemini::with_model(env::var("GEMINI_API_KEY").unwrap(), Model::Gemini3Flash).unwrap()
 };
 
-pub async fn run(bot: Bot, msg: Message) -> ResponseResult<()> {
-    let text = msg.text().unwrap_or("").replacen("/ai", "", 1);
+pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
     if text.trim().is_empty() {
         bot.send_message(msg.chat.id, "Use: /ai <your question>")
             .reply_parameters(ReplyParameters::new(msg.id))
             .await?;
         return Ok(());
     }
+    let msg2 = bot
+        .send_message(msg.chat.id, q(m("Generating...")))
+        .parse_mode(ParseMode::Html)
+        .reply_parameters(ReplyParameters::new(msg.id))
+        .await?;
     let reply_text = match msg.reply_to_message() {
         Some(m) => m.text(),
         None => None,
@@ -48,9 +53,23 @@ pub async fn run(bot: Bot, msg: Message) -> ResponseResult<()> {
         }
     };
 
-    bot.send_message(msg.chat.id, response)
+    bot.edit_message_text(msg.chat.id, msg2.id, sanitize_markdown(response))
         .parse_mode(ParseMode::MarkdownV2)
-        .reply_parameters(ReplyParameters::new(msg.id))
         .await?;
     Ok(())
+}
+
+fn sanitize_markdown(text: String) -> String {
+    text.replace(".", "\\.")
+        .replace("!", "\\!")
+        .replace("-", "\\-")
+        .replace("+", "\\+")
+        .replace("=", "\\=")
+        .replace(">", "\\>")
+        .replace("#", "\\#")
+        .replace("|", "\\|")
+        .replace("{", "\\{")
+        .replace("}", "\\}")
+        .replace("(", "\\(")
+        .replace(")", "\\)")
 }
