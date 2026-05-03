@@ -13,13 +13,15 @@ pub async fn maze(bot: Bot, msg: Message, size: String) -> ResponseResult<()> {
         .trim()
         .split_once(" ")
         .map(|(w, h)| {
-            let w1 = w.trim().parse::<usize>().unwrap_or(10);
-            let h1 = h.trim().parse::<usize>().unwrap_or(10);
-            if w1 > 100 || h1 > 100 {
-                (100, 100)
-            } else {
-                (w1, h1)
+            let mut w1 = w.trim().parse::<usize>().unwrap_or(10);
+            let mut h1 = h.trim().parse::<usize>().unwrap_or(10);
+            if w1 > 100 {
+                w1 = 100;
             }
+            if h1 > 100 {
+                h1 = 100;
+            }
+            (w1, h1)
         })
         .unwrap_or((10, 10));
     let grid = create(width, height);
