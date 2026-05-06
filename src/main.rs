@@ -1,5 +1,6 @@
 mod commands;
 pub mod func;
+mod utils;
 
 use commands::{Command, command_router};
 use dotenvy::dotenv;

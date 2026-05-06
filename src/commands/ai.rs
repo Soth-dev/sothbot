@@ -1,11 +1,12 @@
-use crate::func::{m, q};
+use crate::{
+    edit,
+    func::{m, q},
+    text,
+};
 use dotenvy::dotenv;
 use gemini_rust::{ClientError::BadResponse, Gemini, Model};
 use std::env;
-use teloxide::{
-    prelude::*,
-    types::{ParseMode, ReplyParameters},
-};
+use teloxide::{prelude::*, types::ParseMode};
 
 #[ctor::ctor]
 static GEMINI_CLIENT: Gemini = {
@@ -15,16 +16,10 @@ static GEMINI_CLIENT: Gemini = {
 
 pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
     if text.trim().is_empty() {
-        bot.send_message(msg.chat.id, "Use: /ai <your question>")
-            .reply_parameters(ReplyParameters::new(msg.id))
-            .await?;
+        text!(bot, msg, "Use: /ai <your question>")?;
         return Ok(());
     }
-    let msg2 = bot
-        .send_message(msg.chat.id, q(m("Generating...")))
-        .parse_mode(ParseMode::Html)
-        .reply_parameters(ReplyParameters::new(msg.id))
-        .await?;
+    let msg2 = text!(bot, msg, q(m("Generating...")), ParseMode::Html)?;
     let reply_text = match msg.reply_to_message() {
         Some(m) => m.text(),
         None => None,
@@ -53,9 +48,13 @@ pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
         }
     };
 
-    bot.edit_message_text(msg.chat.id, msg2.id, sanitize_markdown(response))
-        .parse_mode(ParseMode::MarkdownV2)
-        .await?;
+    edit!(
+        bot,
+        msg,
+        msg2,
+        sanitize_markdown(response),
+        ParseMode::MarkdownV2
+    )?;
     Ok(())
 }
 

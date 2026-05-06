@@ -1,6 +1,6 @@
+use crate::{delete, text};
 use serde::Deserialize;
 use teloxide::prelude::*;
-use teloxide::types::ReplyParameters;
 
 #[derive(Debug, Deserialize)]
 #[serde(tag = "type")]
@@ -29,22 +29,16 @@ pub async fn run(bot: Bot, msg: Message) -> ResponseResult<()> {
 
     match joke {
         Some(JokeApiResponse::Single { joke }) => {
-            bot.send_message(msg.chat.id, joke)
-                .reply_parameters(ReplyParameters::new(msg.id))
-                .await?;
+            text!(bot, msg, joke)?;
         }
         Some(JokeApiResponse::TwoPart { setup, delivery }) => {
-            bot.send_message(msg.chat.id, setup)
-                .reply_parameters(ReplyParameters::new(msg.id))
-                .await?;
-            bot.send_message(msg.chat.id, delivery)
-                .reply_parameters(ReplyParameters::new(msg.id))
-                .await?;
+            text!(bot, msg, setup)?;
+            let msg1 = text!(bot, msg, &delivery)?;
+            text!(bot, msg1, delivery)?;
+            delete!(bot, msg1)?;
         }
         None => {
-            bot.send_message(msg.chat.id, "No joke found :(")
-                .reply_parameters(ReplyParameters::new(msg.id))
-                .await?;
+            text!(bot, msg, "No joke found :(")?;
         }
     }
 

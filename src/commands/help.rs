@@ -1,13 +1,14 @@
-use teloxide::{prelude::*, types::ReplyParameters};
+use crate::text;
+use teloxide::prelude::*;
 
 pub async fn run(bot: Bot, msg: Message) -> ResponseResult<()> {
-    bot.send_message(
-        msg.chat.id,
+    text!(
+        bot,
+        msg,
         "Here are the things I can do:
     /joke - Get a random joke
     /ai [message] - Ask AI
-    /echo [message] - Repeat what you say")
-        .reply_parameters(ReplyParameters::new(msg.id))
-        .await?;
+    /echo [message] - Repeat what you say"
+    )?;
     Ok(())
 }

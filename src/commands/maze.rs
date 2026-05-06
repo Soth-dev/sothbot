@@ -1,4 +1,4 @@
-use crate::func::*;
+use crate::{delete, func::*, image, text};
 use image::{ImageBuffer, ImageFormat, Rgb, RgbImage, imageops};
 use rand::{prelude::IndexedRandom, rng};
 use rayon::prelude::*;
@@ -27,19 +27,13 @@ pub async fn maze(bot: Bot, msg: Message, size: String) -> ResponseResult<()> {
     let grid = create(width, height);
     let fixed = fix(&grid);
     let image_buff = render(&fixed);
-    let msg1 = bot
-        .send_message(msg.chat.id, q(m("Creating...")))
-        .parse_mode(ParseMode::Html)
-        .reply_parameters(ReplyParameters::new(msg.id))
-        .await?;
+    let msg1 = text!(bot, msg, q(m("Creating...")), ParseMode::Html)?;
     let mut bytes: Vec<u8> = Vec::new();
     image_buff
         .write_to(&mut Cursor::new(&mut bytes), ImageFormat::Png)
         .unwrap_or_default();
-    bot.send_photo(msg.chat.id, InputFile::memory(bytes))
-        .reply_parameters(ReplyParameters::new(msg.id))
-        .await?;
-    bot.delete_message(msg1.chat.id, msg1.id).await?;
+    image!(bot, msg, InputFile::memory(bytes))?;
+    delete!(bot, msg1)?;
     Ok(())
 }
 

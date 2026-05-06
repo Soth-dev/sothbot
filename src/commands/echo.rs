@@ -1,35 +1,23 @@
+use crate::{delete, text, text_to};
 use teloxide::prelude::*;
-use teloxide::types::ReplyParameters;
 
 pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
     if text.is_empty() {
-        bot.send_message(
-            msg.chat.id,
-            "Please provide a message to echo!\nUsage: /echo [message]",
-        )
-        .reply_parameters(ReplyParameters::new(msg.id))
-        .await?;
+        text!(
+            bot,
+            msg,
+            "Please provide a message to echo!\nUsage: /echo [message]"
+        )?;
         return Ok(());
     }
-    let replied = msg.reply_to_message();
 
-    match replied {
-        Some(reply) => {
-            bot.send_message(msg.chat.id, text)
-                .reply_parameters(ReplyParameters::new(reply.id))
-                .await?;
-        }
-        None => {
-            let msg1 = bot
-                .send_message(msg.chat.id, &text)
-                .reply_parameters(ReplyParameters::new(msg.id))
-                .await?
-                .id;
-            bot.send_message(msg.chat.id, text)
-                .reply_parameters(ReplyParameters::new(msg1))
-                .await?;
-            bot.delete_message(msg.chat.id, msg1).await?;
-        }
-    };
+    if let Some(reply) = msg.reply_to_message() {
+        text_to!(bot, msg, reply, text)?;
+    } else {
+        let msg1 = text!(bot, msg, &text)?;
+        text!(bot, msg1, text)?;
+        delete!(bot, msg1)?;
+    }
+
     Ok(())
 }
