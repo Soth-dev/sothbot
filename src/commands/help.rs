@@ -9,6 +9,7 @@ pub async fn run(bot: Bot, msg: Message) -> ResponseResult<()> {
     /joke - Get a random joke
     /ai [message] - Ask AI
     /echo [message] - Repeat what you say"
-    )?;
+    )
+    .await?;
     Ok(())
 }

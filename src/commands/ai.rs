@@ -16,10 +16,10 @@ static GEMINI_CLIENT: Gemini = {
 
 pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
     if text.trim().is_empty() {
-        text!(bot, msg, "Use: /ai <your question>")?;
+        text!(bot, msg, "Use: /ai <your question>").await?;
         return Ok(());
     }
-    let msg2 = text!(bot, msg, q(m("Generating...")), ParseMode::Html)?;
+    let msg2 = text!(bot, msg, q(m("Generating...")), ParseMode::Html).await?;
     let reply_text = match msg.reply_to_message() {
         Some(m) => m.text(),
         None => None,
@@ -54,7 +54,8 @@ pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
         msg2,
         sanitize_markdown(response),
         ParseMode::MarkdownV2
-    )?;
+    )
+    .await?;
     Ok(())
 }
 

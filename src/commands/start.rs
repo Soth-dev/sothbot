@@ -10,13 +10,15 @@ pub async fn run(bot: Bot, msg: Message) -> ResponseResult<()> {
                 "Hello, {}!\n\nWelcome to the bot. Type /help to see what I can do!",
                 u.first_name
             )
-        )?;
+        )
+        .await?;
     } else {
         text!(
             bot,
             msg,
             "Hello, there!\n\nWelcome to the bot. Type /help to see what I can do!"
-        )?;
+        )
+        .await?;
     }
     Ok(())
 }

@@ -27,13 +27,13 @@ pub async fn maze(bot: Bot, msg: Message, size: String) -> ResponseResult<()> {
     let grid = create(width, height);
     let fixed = fix(&grid);
     let image_buff = render(&fixed);
-    let msg1 = text!(bot, msg, q(m("Creating...")), ParseMode::Html)?;
+    let msg1 = text!(bot, msg, q(m("Creating...")), ParseMode::Html).await?;
     let mut bytes: Vec<u8> = Vec::new();
     image_buff
         .write_to(&mut Cursor::new(&mut bytes), ImageFormat::Png)
         .unwrap_or_default();
-    image!(bot, msg, InputFile::memory(bytes))?;
-    delete!(bot, msg1)?;
+    image!(bot, msg, InputFile::memory(bytes)).await?;
+    delete!(bot, msg1).await?;
     Ok(())
 }
 
