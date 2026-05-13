@@ -1,4 +1,4 @@
-use crate::{delete, func::*, image, text};
+use crate::{delete, edit, func::*, image, text};
 use image::{ImageBuffer, ImageFormat, Rgb, RgbImage, imageops};
 use rand::{prelude::IndexedRandom, rng};
 use rayon::prelude::*;
@@ -32,8 +32,15 @@ pub async fn maze(bot: Bot, msg: Message, size: String) -> ResponseResult<()> {
     image_buff
         .write_to(&mut Cursor::new(&mut bytes), ImageFormat::Png)
         .unwrap_or_default();
-    image!(bot, msg, InputFile::memory(bytes)).await?;
-    delete!(bot, msg1).await?;
+    match image!(bot, msg, InputFile::memory(bytes)).await {
+        Err(e) => {
+            dbg!(e);
+            edit!(bot, msg, msg1, q(m("Failed to create a maze"))).await?;
+        }
+        Ok(_) => {
+            delete!(bot, msg1).await?;
+        }
+    };
     Ok(())
 }
 
