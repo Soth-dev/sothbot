@@ -1,8 +1,4 @@
-use crate::{
-    edit,
-    func::{m, q},
-    text,
-};
+use crate::{edit, m, q, text};
 use dotenvy::dotenv;
 use gemini_rust::{ClientError::BadResponse, Gemini, Model};
 use std::env;
@@ -16,10 +12,10 @@ static GEMINI_CLIENT: Gemini = {
 
 pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
     if text.trim().is_empty() {
-        text!(bot, msg, "Use: /ai <your question>").await?;
+        text!(bot, msg, "Use: /ai [your question]").await?;
         return Ok(());
     }
-    let msg2 = text!(bot, msg, q(m("Generating...")), ParseMode::Html).await?;
+    let msg2 = text!(bot, msg, q!(m!("Generating...")), ParseMode::Html).await?;
     let reply_text = match msg.reply_to_message() {
         Some(m) => m.text(),
         None => None,

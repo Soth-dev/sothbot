@@ -1,4 +1,4 @@
-use crate::{delete, edit, func::*, image, text};
+use crate::{delete, edit, image, m, q, text};
 use image::{ImageBuffer, ImageFormat, Rgb, RgbImage, imageops};
 use rand::{prelude::IndexedRandom, rng};
 use rayon::prelude::*;
@@ -27,7 +27,7 @@ pub async fn maze(bot: Bot, msg: Message, size: String) -> ResponseResult<()> {
     let grid = create(width, height);
     let fixed = fix(&grid);
     let image_buff = render(&fixed);
-    let msg1 = text!(bot, msg, q(m("Creating...")), ParseMode::Html).await?;
+    let msg1 = text!(bot, msg, q!(m!("Creating...")), ParseMode::Html).await?;
     let mut bytes: Vec<u8> = Vec::new();
     image_buff
         .write_to(&mut Cursor::new(&mut bytes), ImageFormat::Png)
@@ -35,7 +35,7 @@ pub async fn maze(bot: Bot, msg: Message, size: String) -> ResponseResult<()> {
     match image!(bot, msg, InputFile::memory(bytes)).await {
         Err(e) => {
             dbg!(e);
-            edit!(bot, msg, msg1, q(m("Failed to create a maze"))).await?;
+            edit!(bot, msg, msg1, q!(m!("Failed to create a maze"))).await?;
         }
         Ok(_) => {
             delete!(bot, msg1).await?;

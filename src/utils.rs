@@ -52,3 +52,24 @@ macro_rules! image {
             .reply_parameters(ReplyParameters::new($chat.id))
     };
 }
+
+#[macro_export]
+macro_rules! f {
+    ($t:expr, $u:expr) => {
+        format!("<{}>{}</{}>", $u, $t, $u)
+    };
+}
+
+#[macro_export]
+macro_rules! q {
+    ($t:expr) => {
+        $crate::f!($t, "blockquote")
+    };
+}
+
+#[macro_export]
+macro_rules! m {
+    ($t:expr) => {
+        $crate::f!($t, "code")
+    };
+}

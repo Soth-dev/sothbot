@@ -12,35 +12,27 @@ enum JokeApiResponse {
 }
 
 pub async fn run(bot: Bot, msg: Message) -> ResponseResult<()> {
-    let url = "https://v2.jokeapi.dev/joke/Any";
-    let joke = match reqwest::get(url).await {
-        Ok(v) => match v.json::<JokeApiResponse>().await {
-            Ok(t) => Some(t),
-            Err(e) => {
-                println!("{e:#?}");
-                None
-            }
-        },
-        Err(e) => {
-            println!("{e:#?}");
-            None
-        }
-    };
-
-    match joke {
-        Some(JokeApiResponse::Single { joke }) => {
+    match joke().await {
+        Ok(JokeApiResponse::Single { joke }) => {
             text!(bot, msg, joke).await?;
         }
-        Some(JokeApiResponse::TwoPart { setup, delivery }) => {
+        Ok(JokeApiResponse::TwoPart { setup, delivery }) => {
             text!(bot, msg, setup).await?;
             let msg1 = text!(bot, msg, &delivery).await?;
             text!(bot, msg1, delivery).await?;
             delete!(bot, msg1).await?;
         }
-        None => {
+        Err(e) => {
             text!(bot, msg, "No joke found :(").await?;
+            dbg!(e);
         }
     }
 
     Ok(())
+}
+
+async fn joke() -> Result<JokeApiResponse, Box<dyn std::error::Error + Sync + Send>> {
+    let url = "https://v2.jokeapi.dev/joke/Any";
+    let joke = reqwest::get(url).await?.json::<JokeApiResponse>().await?;
+    Ok(joke)
 }
