@@ -32,6 +32,7 @@ pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
     let response = match content.execute().await {
         Ok(t) => t.text(),
         Err(e) => {
+            dbg!(&e);
             if let BadResponse { description, .. } = e {
                 println!(
                     "{}",
@@ -40,18 +41,29 @@ pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
                         .unwrap_or("Error: \x1b[91m(No details)\x1b[0m")
                 )
             };
-            "failed to request".to_string()
+            ">`Failed to generate...`".to_string()
         }
     };
 
-    edit!(
+    if let Err(err) = edit!(
         bot,
         msg,
         msg2,
         sanitize_markdown(response),
         ParseMode::MarkdownV2
     )
-    .await?;
+    .await
+    {
+        dbg!(err);
+        edit!(
+            bot,
+            msg,
+            msg2,
+            q!(m!("Failed to generate...")),
+            ParseMode::Html
+        )
+        .await?;
+    }
     Ok(())
 }
 
@@ -61,11 +73,11 @@ fn sanitize_markdown(text: String) -> String {
         .replace("-", "\\-")
         .replace("+", "\\+")
         .replace("=", "\\=")
-        .replace(">", "\\>")
         .replace("#", "\\#")
         .replace("|", "\\|")
         .replace("{", "\\{")
         .replace("}", "\\}")
         .replace("(", "\\(")
         .replace(")", "\\)")
+        .replace(" >", " \\>")
 }
