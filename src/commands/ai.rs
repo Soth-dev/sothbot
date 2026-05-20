@@ -45,15 +45,9 @@ pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
         }
     };
 
-    if let Err(err) = edit!(
-        bot,
-        msg,
-        msg2,
-        sanitize_markdown(response),
-        ParseMode::MarkdownV2
-    )
-    .await
-    {
+    let text_resp = sanitize_markdown(response);
+    println!("\n{}", text_resp);
+    if let Err(err) = edit!(bot, msg, msg2, text_resp, ParseMode::MarkdownV2).await {
         dbg!(err);
         edit!(
             bot,

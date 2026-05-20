@@ -19,6 +19,17 @@ pub enum Command {
     Maze { text: String },
 }
 
+pub async fn router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
+    tokio::spawn(async move {
+        if let Err(e) = command_router(bot, msg, cmd).await {
+            print!("\x1b[101m\x1b[93m");
+            dbg!(e);
+            println!("\x1b[0m");
+        }
+    });
+    Ok(())
+}
+
 pub async fn command_router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     match cmd {
         Command::Start => start::run(bot, msg).await,

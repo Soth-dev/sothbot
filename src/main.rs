@@ -1,7 +1,7 @@
 mod commands;
 mod utils;
 
-use commands::{Command, command_router};
+use commands::{Command, router};
 use dotenvy::dotenv;
 use teloxide::prelude::*;
 
@@ -16,7 +16,7 @@ async fn main() {
 
     let handler = Update::filter_message()
         .filter_command::<Command>()
-        .endpoint(command_router);
+        .endpoint(router);
 
     Dispatcher::builder(bot, handler)
         .enable_ctrlc_handler()

@@ -35,7 +35,14 @@ pub async fn maze(bot: Bot, msg: Message, size: String) -> ResponseResult<()> {
     match image!(bot, msg, InputFile::memory(bytes)).await {
         Err(e) => {
             dbg!(e);
-            edit!(bot, msg, msg1, q!(m!("Failed to create a maze"))).await?;
+            edit!(
+                bot,
+                msg,
+                msg1,
+                q!(m!("Failed to create a maze")),
+                ParseMode::Html
+            )
+            .await?;
         }
         Ok(_) => {
             delete!(bot, msg1).await?;
