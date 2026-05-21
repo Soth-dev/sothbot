@@ -4,6 +4,7 @@ pub mod help;
 pub mod joke;
 pub mod maze;
 pub mod start;
+mod write_note;
 
 use teloxide::prelude::*;
 use teloxide::utils::command::BotCommands;
@@ -17,6 +18,7 @@ pub enum Command {
     Joke,
     Ai { text: String },
     Maze { text: String },
+    Write { text: String },
 }
 
 pub async fn router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
@@ -38,5 +40,6 @@ pub async fn command_router(bot: Bot, msg: Message, cmd: Command) -> ResponseRes
         Command::Joke => joke::run(bot, msg).await,
         Command::Ai { text } => ai::run(bot, msg, text).await,
         Command::Maze { text } => maze::maze(bot, msg, text).await,
+        Command::Write { text } => write_note::run(bot, msg, text).await,
     }
 }
