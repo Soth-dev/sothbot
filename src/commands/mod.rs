@@ -1,9 +1,10 @@
-pub mod ai;
-pub mod echo;
-pub mod help;
-pub mod joke;
-pub mod maze;
-pub mod start;
+mod ai;
+mod echo;
+mod formats;
+mod help;
+mod joke;
+mod maze;
+mod start;
 mod texting;
 mod write_note;
 
@@ -21,14 +22,14 @@ pub enum Command {
     Maze { text: String },
     Write { text: String },
     Flip { text: String },
+    Html { text: String },
+    Md { text: String },
 }
 
 pub async fn router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     tokio::spawn(async move {
         if let Err(e) = command_router(bot, msg, cmd).await {
-            print!("\x1b[101m\x1b[93m");
-            dbg!(e);
-            println!("\x1b[0m");
+            println!("\x1b[93mErr = \x1b[101m{:#?}\x1b[0m\n", e);
         }
     });
     Ok(())
@@ -44,5 +45,7 @@ pub async fn command_router(bot: Bot, msg: Message, cmd: Command) -> ResponseRes
         Command::Maze { text } => maze::maze(bot, msg, text).await,
         Command::Write { text } => write_note::run(bot, msg, text).await,
         Command::Flip { text } => texting::flip(bot, msg, text).await,
+        Command::Html { text } => formats::html(bot, msg, text).await,
+        Command::Md { text } => formats::md(bot, msg, text).await,
     }
 }

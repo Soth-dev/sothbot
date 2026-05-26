@@ -2,23 +2,18 @@ use crate::text;
 use teloxide::prelude::*;
 
 pub async fn run(bot: Bot, msg: Message) -> ResponseResult<()> {
-    if let Some(u) = msg.from {
-        text!(
-            bot,
-            msg,
-            format!(
-                "Hello, {}!\n\nWelcome to the bot. Type /help to see what I can do!",
-                u.first_name
-            )
+    let name = match msg.from {
+        Some(u) => u.first_name,
+        None => "there".to_string(),
+    };
+    text!(
+        bot,
+        msg,
+        format!(
+            "Hello, {}!\n\nWelcome to the bot. Type /help to see what I can do! 🚀",
+            name
         )
-        .await?;
-    } else {
-        text!(
-            bot,
-            msg,
-            "Hello, there!\n\nWelcome to the bot. Type /help to see what I can do!"
-        )
-        .await?;
-    }
+    )
+    .await?;
     Ok(())
 }
