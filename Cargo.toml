@@ -23,3 +23,7 @@ ab_glyph = "0.2.32"
 
 [profile.release]
 lto = true
+opt-level = 3
+codegen-units = 1
+panic = "unwind"
+rpath = true
