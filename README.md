@@ -3,5 +3,5 @@
 run:
 
 ```bash
-RUST_LOG=teloxide=info RUST_BACKTRACE=1 cargo r -r
+RUST_LOG=info cargo r -r
 ```

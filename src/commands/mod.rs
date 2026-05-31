@@ -29,7 +29,7 @@ pub enum Command {
 pub async fn router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     tokio::spawn(async move {
         if let Err(e) = command_router(bot, msg, cmd).await {
-            println!("\x1b[93mErr = \x1b[101m{:#?}\x1b[0m\n", e);
+            log::error!(target: "RequestError", "{:#?}", e);
         }
     });
     Ok(())

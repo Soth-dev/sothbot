@@ -9,7 +9,8 @@ use teloxide::prelude::*;
 async fn main() {
     dotenv().unwrap();
 
-    pretty_env_logger::init();
+    pretty_env_logger::init_timed();
+
     log::info!("Starting bot...");
 
     let bot = Bot::from_env();
