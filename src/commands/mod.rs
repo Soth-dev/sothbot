@@ -1,12 +1,4 @@
-mod ai;
-mod echo;
-mod formats;
-mod help;
-mod joke;
-mod maze;
-mod start;
-mod texting;
-mod write_note;
+automod::dir!("src/commands");
 
 use teloxide::prelude::*;
 use teloxide::utils::command::BotCommands;
@@ -14,15 +6,25 @@ use teloxide::utils::command::BotCommands;
 #[derive(BotCommands, Clone, Debug)]
 #[command(rename_rule = "lowercase")]
 pub enum Command {
+    #[command(description = "Welcome message.")]
     Start,
+    #[command(description = "Show this help message.")]
     Help,
+    #[command(description = "Repeat your message.")]
     Echo { text: String },
+    #[command(description = "Send a random joke.")]
     Joke,
+    #[command(description = "Ask AI.")]
     Ai { text: String },
+    #[command(description = "Create a maze.")]
     Maze { text: String },
+    #[command(description = "Write inside a book.")]
     Write { text: String },
+    #[command(description = "Flip text.")]
     Flip { text: String },
+    #[command(description = "HTML format.")]
     Html { text: String },
+    #[command(description = "Markdown (second generation) format.")]
     Md { text: String },
 }
 
@@ -38,7 +40,7 @@ pub async fn router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> 
 async fn command_router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
     match cmd {
         Command::Start => start::run(bot, msg).await,
-        Command::Help => help::run(bot, msg).await,
+        Command::Help => help::run(bot, msg, Command::descriptions()).await,
         Command::Echo { text } => echo::run(bot, msg, text).await,
         Command::Joke => joke::run(bot, msg).await,
         Command::Ai { text } => ai::run(bot, msg, text).await,

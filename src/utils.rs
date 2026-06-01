@@ -73,3 +73,41 @@ macro_rules! m {
         $crate::f!($t, "code")
     };
 }
+
+#[macro_export]
+macro_rules! b {
+    ($t:expr) => {
+        $crate::f!($t, "b")
+    };
+}
+
+#[macro_export]
+macro_rules! i {
+    ($t:expr) => {
+        $crate::f!($t, "i")
+    };
+}
+
+#[macro_export]
+macro_rules! esp_html {
+    ($t:expr) => {
+        $t.replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;")
+    };
+}
+
+#[macro_export]
+macro_rules! esp_md_v2 {
+    ($t:expr) => {
+        $t.replace("\\", "\\\\")
+            .replace("_", "\\_")
+            .replace("*", "\\*")
+            .replace("[", "\\[")
+            .replace("]", "\\]")
+            .replace("(", "\\(")
+            .replace(")", "\\)")
+            .replace("`", "\\`")
+    };
+}
