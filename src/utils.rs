@@ -89,6 +89,37 @@ macro_rules! i {
 }
 
 #[macro_export]
+macro_rules! code {
+    ($t:expr, $lang:expr) => {
+        $crate::f!(
+            format!("<code class=\"language-{}\">{}</code>", $lang, $t),
+            "pre"
+        )
+    };
+}
+
+#[macro_export]
+macro_rules! spoiler {
+    ($t:expr) => {
+        $crate::f!($t, "tg-spoiler")
+    };
+}
+
+#[macro_export]
+macro_rules! link {
+    ($t:expr, $url:expr) => {
+        format!("<a href=\"{}\">{}</a>", $url, $t)
+    };
+}
+
+#[macro_export]
+macro_rules! emoji {
+    ($t:expr, $id:expr) => {
+        format!("<tg-emoji emoji-id=\"{}\">{}</tg-emoji>", $id, $t)
+    };
+}
+
+#[macro_export]
 macro_rules! esp_html {
     ($t:expr) => {
         $t.replace("&", "&amp;")

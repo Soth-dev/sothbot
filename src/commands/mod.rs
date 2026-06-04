@@ -24,7 +24,7 @@ pub enum Command {
     Flip { text: String },
     #[command(description = "HTML format.")]
     Html { text: String },
-    #[command(description = "Markdown (second generation) format.")]
+    #[command(description = "Markdown V2 format.")]
     Md { text: String },
 }
 

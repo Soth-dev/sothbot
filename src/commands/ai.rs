@@ -4,22 +4,22 @@ use gemini_rust::{ClientError::BadResponse, Gemini, Model};
 use std::env;
 use teloxide::{prelude::*, types::ParseMode};
 
-#[ctor::ctor]
+#[ctor::ctor(unsafe)]
 static GEMINI_CLIENT: Gemini = {
     dotenv().unwrap();
     Gemini::with_model(env::var("GEMINI_API_KEY").unwrap(), Model::Gemini3Flash).unwrap()
 };
 
 pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
-    if text.trim().is_empty() {
+    let reply_text = msg
+        .quote()
+        .map(|m| m.text.as_str())
+        .or(msg.reply_to_message().and_then(|m| m.text()));
+    if text.is_empty() && reply_text.is_none() {
         text!(bot, msg, "Use: /ai [your question]").await?;
         return Ok(());
     }
     let msg2 = text!(bot, msg, q!(m!("Generating...")), ParseMode::Html).await?;
-    let reply_text = match msg.reply_to_message() {
-        Some(m) => m.text(),
-        None => None,
-    };
 
     let mut content = GEMINI_CLIENT
         .generate_content()

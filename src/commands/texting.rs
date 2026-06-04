@@ -46,7 +46,7 @@ static DIACRITICS_MAP: LazyLock<HashMap<char, char>> = LazyLock::new(|| {
     m
 });
 
-fn transform_text(text: &str) -> String {
+fn transform_flip(text: &str) -> String {
     let mut output = String::new();
 
     for c in text.replace('ß', "ss").chars().rev() {
@@ -62,16 +62,14 @@ fn transform_text(text: &str) -> String {
 }
 
 pub async fn flip(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
-    let reply_text = match msg.reply_to_message() {
-        Some(m) => m.text(),
-        None => None,
-    };
+    let quote = msg.quote().map(|m| m.text.as_str());
+    let reply_text = msg.reply_to_message().and_then(|m| m.text());
     if text.is_empty() && reply_text.is_none() {
         text!(bot, msg, "Use /flip [text]").await?;
         return Ok(());
     }
-    let flipped = transform_text(if text.is_empty() {
-        reply_text.unwrap_or(&text)
+    let flipped = transform_flip(if text.is_empty() {
+        quote.or(reply_text).unwrap_or(&text)
     } else {
         &text
     });
