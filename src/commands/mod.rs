@@ -26,6 +26,8 @@ pub enum Command {
     Html { text: String },
     #[command(description = "Markdown V2 format.")]
     Md { text: String },
+    #[command(description = "Meowing for you.")]
+    Meow,
 }
 
 pub async fn router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
@@ -49,5 +51,6 @@ async fn command_router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<
         Command::Flip { text } => texting::flip(bot, msg, text).await,
         Command::Html { text } => formats::html(bot, msg, text).await,
         Command::Md { text } => formats::md(bot, msg, text).await,
+        Command::Meow => meow::run(bot, msg).await,
     }
 }

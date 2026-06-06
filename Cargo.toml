@@ -24,7 +24,7 @@ automod = "1.0.17"
 
 [profile.release]
 lto = true
-opt-level = 3
+opt-level = 3     # "s" for smaller size
 codegen-units = 1
 panic = "unwind"
 rpath = true
