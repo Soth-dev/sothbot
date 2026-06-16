@@ -11,7 +11,7 @@ enum JokeResponse {
     TwoPart { setup: String, delivery: String },
 }
 
-pub async fn run(bot: Bot, msg: Message) -> ResponseResult<()> {
+pub async fn run(bot: Bot, msg: Message) -> anyhow::Result<()> {
     match joke().await {
         Ok(JokeResponse::Single { joke }) => {
             text!(bot, msg, joke).await?;

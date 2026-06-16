@@ -1,7 +1,7 @@
 use crate::{delete, text, text_to};
 use teloxide::prelude::*;
 
-pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
+pub async fn run(bot: Bot, msg: Message, text: String) -> anyhow::Result<()> {
     if text.is_empty() {
         text!(
             bot,

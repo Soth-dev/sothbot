@@ -140,5 +140,13 @@ macro_rules! esp_md_v2 {
             .replace("(", "\\(")
             .replace(")", "\\)")
             .replace("`", "\\`")
+            .replace("+", "\\+")
+            .replace("-", "\\-")
+            .replace("=", "\\=")
+            .replace("#", "\\#")
+            .replace("|", "\\|")
+            .replace("{", "\\{")
+            .replace("}", "\\}")
+            .replace(">", "\\>")
     };
 }

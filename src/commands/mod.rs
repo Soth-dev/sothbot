@@ -39,7 +39,7 @@ pub async fn router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> 
     Ok(())
 }
 
-async fn command_router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
+async fn command_router(bot: Bot, msg: Message, cmd: Command) -> anyhow::Result<()> {
     match cmd {
         Command::Start => start::run(bot, msg).await,
         Command::Help => help::run(bot, msg, Command::descriptions()).await,

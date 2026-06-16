@@ -8,7 +8,7 @@ use teloxide::{
     types::{InputFile, ParseMode, ReplyParameters},
 };
 
-pub async fn maze(bot: Bot, msg: Message, size: String) -> ResponseResult<()> {
+pub async fn maze(bot: Bot, msg: Message, size: String) -> anyhow::Result<()> {
     let (width, height) = size
         .trim()
         .split_once(" ")
@@ -268,16 +268,6 @@ fn render(grid: &[Vec<char>]) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
     for (ir, row_img) in rendered_rows.iter().enumerate() {
         let y = ir as u32 * cell_size;
         imageops::replace(&mut img_buf, row_img, 0, y as i64);
-    }
-
-    let out_path = "/storage/emulated/0/Download/1/out/outputrs.png";
-
-    if let Some(parent) = Path::new(out_path).parent() {
-        let _ = fs::create_dir_all(parent);
-    }
-
-    if let Err(e) = img_buf.save(out_path) {
-        eprintln!("Failed to save image: {}", e);
     }
     img_buf
 }

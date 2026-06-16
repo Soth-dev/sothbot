@@ -1,7 +1,7 @@
 use crate::{b, esp_html, i, text};
 use teloxide::{prelude::*, types::ParseMode, utils::command::CommandDescriptions};
 
-pub async fn run(bot: Bot, msg: Message, desc: CommandDescriptions<'static>) -> ResponseResult<()> {
+pub async fn run(bot: Bot, msg: Message, desc: CommandDescriptions<'static>) -> anyhow::Result<()> {
     let help = desc
         .to_string()
         .split('\n')

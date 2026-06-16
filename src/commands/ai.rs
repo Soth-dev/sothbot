@@ -10,7 +10,7 @@ static GEMINI_CLIENT: Gemini = {
     Gemini::with_model(env::var("GEMINI_API_KEY").unwrap(), Model::Gemini3Flash).unwrap()
 };
 
-pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
+pub async fn run(bot: Bot, msg: Message, text: String) -> anyhow::Result<()> {
     let reply_text = msg
         .quote()
         .map(|m| m.text.as_str())

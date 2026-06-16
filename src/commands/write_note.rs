@@ -9,7 +9,7 @@ use teloxide::{
     types::{InputFile, ParseMode, ReplyParameters},
 };
 
-pub async fn run(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
+pub async fn run(bot: Bot, msg: Message, text: String) -> anyhow::Result<()> {
     let reply_text = match msg.reply_to_message() {
         Some(m) => m.text(),
         None => None,

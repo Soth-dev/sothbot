@@ -1,7 +1,7 @@
 use crate::text;
 use rand::{rng, seq::IndexedRandom};
 use teloxide::{prelude::*, types::ParseMode};
-pub async fn run(bot: Bot, msg: Message) -> ResponseResult<()> {
+pub async fn run(bot: Bot, msg: Message) -> anyhow::Result<()> {
     let r = *MEOW_TEXTS.choose(&mut rng()).unwrap();
     text!(bot, msg, r, ParseMode::Html).await?;
     Ok(())

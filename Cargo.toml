@@ -21,10 +21,11 @@ imageproc = "0.27.0"
 ab_glyph = "0.2.32"
 log = "0.4.30"
 automod = "1.0.17"
+anyhow = "1.0.102"
 
 [profile.release]
 lto = true
-opt-level = 3     # "s" for smaller size
-codegen-units = 1
+opt-level = 3 # "s" for smaller size
+#codegen-units = 1
 panic = "unwind"
 rpath = true

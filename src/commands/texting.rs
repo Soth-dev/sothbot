@@ -2,6 +2,31 @@ use crate::text;
 use std::{collections::HashMap, sync::LazyLock};
 use teloxide::{prelude::*, types::Message};
 
+pub async fn flip(bot: Bot, msg: Message, text: String) -> anyhow::Result<()> {
+    let quote = msg.quote().map(|m| m.text.as_str());
+    let reply_text = msg.reply_to_message().and_then(|m| m.text());
+    if text.is_empty() && reply_text.is_none() {
+        text!(bot, msg, "Use /flip [text]").await?;
+        return Ok(());
+    }
+    let flipped = transform_flip(if text.is_empty() {
+        quote.or(reply_text).unwrap_or(&text)
+    } else {
+        &text
+    });
+    text!(bot, msg, flipped).await?;
+
+    Ok(())
+}
+
+pub async fn spoiler(bot: Bot, msg: Message, text: String) -> anyhow::Result<()> {
+    if text.is_empty() {
+        text!(bot, msg, "use /sp [text]").await?;
+    } else {
+    }
+    todo!();
+}
+
 static FLIP_MAP: LazyLock<HashMap<char, char>> = LazyLock::new(|| {
     let mut m = HashMap::new();
     let ranges = [
@@ -59,21 +84,4 @@ fn transform_flip(text: &str) -> String {
         }
     }
     output
-}
-
-pub async fn flip(bot: Bot, msg: Message, text: String) -> ResponseResult<()> {
-    let quote = msg.quote().map(|m| m.text.as_str());
-    let reply_text = msg.reply_to_message().and_then(|m| m.text());
-    if text.is_empty() && reply_text.is_none() {
-        text!(bot, msg, "Use /flip [text]").await?;
-        return Ok(());
-    }
-    let flipped = transform_flip(if text.is_empty() {
-        quote.or(reply_text).unwrap_or(&text)
-    } else {
-        &text
-    });
-    text!(bot, msg, flipped).await?;
-
-    Ok(())
 }
