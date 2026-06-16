@@ -22,6 +22,8 @@ pub enum Command {
     Write { text: String },
     #[command(description = "Flip text.")]
     Flip { text: String },
+    #[command(description = "Spoiler the text.")]
+    Spoiler { text: String },
     #[command(description = "HTML format.")]
     Html { text: String },
     #[command(description = "Markdown V2 format.")]
@@ -49,6 +51,7 @@ async fn command_router(bot: Bot, msg: Message, cmd: Command) -> anyhow::Result<
         Command::Maze { text } => maze::maze(bot, msg, text).await,
         Command::Write { text } => write_note::run(bot, msg, text).await,
         Command::Flip { text } => texting::flip(bot, msg, text).await,
+        Command::Spoiler { text } => texting::spoiler(bot, msg, text).await,
         Command::Html { text } => formats::html(bot, msg, text).await,
         Command::Md { text } => formats::md(bot, msg, text).await,
         Command::Meow => meow::run(bot, msg).await,

@@ -2,7 +2,7 @@ use crate::{delete, edit, image, m, q, text};
 use image::{ImageBuffer, ImageFormat, Rgb, RgbImage, imageops};
 use rand::{prelude::IndexedRandom, rng};
 use rayon::prelude::*;
-use std::{collections::HashMap, fs, io::Cursor, path::Path};
+use std::{collections::HashMap, io::Cursor};
 use teloxide::{
     prelude::*,
     types::{InputFile, ParseMode, ReplyParameters},

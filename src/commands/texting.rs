@@ -1,6 +1,9 @@
-use crate::text;
+use crate::{esp_html, spoiler, text};
 use std::{collections::HashMap, sync::LazyLock};
-use teloxide::{prelude::*, types::Message};
+use teloxide::{
+    prelude::*,
+    types::{Message, ParseMode},
+};
 
 pub async fn flip(bot: Bot, msg: Message, text: String) -> anyhow::Result<()> {
     let quote = msg.quote().map(|m| m.text.as_str());
@@ -23,8 +26,9 @@ pub async fn spoiler(bot: Bot, msg: Message, text: String) -> anyhow::Result<()>
     if text.is_empty() {
         text!(bot, msg, "use /sp [text]").await?;
     } else {
+        text!(bot, msg, spoiler!(esp_html!(text)), ParseMode::Html).await?;
     }
-    todo!();
+    Ok(())
 }
 
 static FLIP_MAP: LazyLock<HashMap<char, char>> = LazyLock::new(|| {
