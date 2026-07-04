@@ -44,9 +44,10 @@ pub async fn router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> 
 async fn command_router(bot: Bot, msg: Message, cmd: Command) -> anyhow::Result<()> {
     match cmd {
         Command::Start => start::run(bot, msg).await,
+        Command::Joke => joke::run(bot, msg).await,
+        Command::Meow => meow::run(bot, msg).await,
         Command::Help => help::run(bot, msg, Command::descriptions()).await,
         Command::Echo { text } => echo::run(bot, msg, text).await,
-        Command::Joke => joke::run(bot, msg).await,
         Command::Ai { text } => ai::run(bot, msg, text).await,
         Command::Maze { text } => maze::maze(bot, msg, text).await,
         Command::Write { text } => write_note::run(bot, msg, text).await,
@@ -54,6 +55,5 @@ async fn command_router(bot: Bot, msg: Message, cmd: Command) -> anyhow::Result<
         Command::Spoiler { text } => texting::spoiler(bot, msg, text).await,
         Command::Html { text } => formats::html(bot, msg, text).await,
         Command::Md { text } => formats::md(bot, msg, text).await,
-        Command::Meow => meow::run(bot, msg).await,
     }
 }

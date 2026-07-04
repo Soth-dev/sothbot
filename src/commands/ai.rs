@@ -74,4 +74,5 @@ fn sanitize_markdown(text: String) -> String {
         .replace("(", "\\(")
         .replace(")", "\\)")
         .replace(" >", " \\>")
+        .replace("\\#\\#\\#", "●")
 }
