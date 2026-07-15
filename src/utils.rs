@@ -56,7 +56,7 @@ macro_rules! image {
 #[macro_export]
 macro_rules! f {
     ($t:expr, $u:expr) => {
-        format!("<{}>{}</{}>", $u, $t, $u)
+        format!("<{}>{}</{0}>", $u, $t)
     };
 }
 

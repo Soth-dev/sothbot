@@ -23,8 +23,8 @@ pub async fn run(bot: Bot, msg: Message) -> anyhow::Result<()> {
             delete!(bot, msg1).await?;
         }
         Err(e) => {
-            text!(bot, msg, "No joke found :(").await?;
-            dbg!(e);
+            text!(bot, msg, "No joke... sad :(").await?;
+            return Err(e.into());
         }
     }
 

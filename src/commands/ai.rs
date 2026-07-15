@@ -21,16 +21,14 @@ pub async fn run(bot: Bot, msg: Message, text: String) -> anyhow::Result<()> {
     }
     let msg2 = text!(bot, msg, q!(m!("Generating...")), ParseMode::Html).await?;
 
-    let mut content = GEMINI_CLIENT
-        .generate_content()
-        .with_user_message(text.trim());
+    let mut content = GEMINI_CLIENT.create_interaction().with_text(text.trim());
     content = match reply_text {
         Some(t) => content.with_system_instruction(t),
         None => content,
     };
 
     let response = match content.execute().await {
-        Ok(t) => t.text(),
+        Ok(t) => t.output_text(),
         Err(e) => {
             dbg!(&e);
             if let BadResponse { description, .. } = e {
