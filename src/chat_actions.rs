@@ -1,19 +1,12 @@
 use crate::{b, esp_html, text};
-use dotenvy::dotenv;
-use std::env;
+use std::{env, sync::LazyLock};
 use teloxide::{prelude::*, types::ParseMode};
 
-#[ctor::ctor(unsafe)]
-static WELCOME_MEMBER: bool = {
-    dotenv().unwrap();
-    env::var("WELCOME_MESSAGE").unwrap() == "true"
-};
+static WELCOME_MEMBER: LazyLock<bool> =
+    LazyLock::new(|| env::var("WELCOME_MESSAGE").unwrap_or(String::from("false")) == "true");
 
-#[ctor::ctor(unsafe)]
-static GOODBYE_MESSAGE: bool = {
-    dotenv().unwrap();
-    env::var("GOODBYE_MESSAGE").unwrap() == "true"
-};
+static GOODBYE_MESSAGE: LazyLock<bool> =
+    LazyLock::new(|| env::var("GOODBYE_MESSAGE").unwrap_or("false".to_string()) == "true");
 
 pub async fn new_member(bot: Bot, msg: Message) -> ResponseResult<()> {
     if !*WELCOME_MEMBER {

@@ -5,12 +5,10 @@ pub async fn run(bot: Bot, msg: Message, desc: CommandDescriptions<'static>) -> 
     let help = desc
         .to_string()
         .split('\n')
-        .map(|s| {
-            let s = match esp_html!(s).split_once("—") {
-                Some((c, t)) => format!("{} — {}", b!(c.trim()), i!(t.trim())),
-                None => b!(s),
-            };
-            format!("  {}", s)
+        .filter_map(|s| match esp_html!(s).split_once("—") {
+            Some((_, t)) if t.starts_with('!') => None,
+            Some((c, t)) => Some(format!("  {} — {}", b!(c.trim()), i!(t.trim()))),
+            None => Some(format!("  {}", b!(s))),
         })
         .collect::<Vec<String>>()
         .join("\n");

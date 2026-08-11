@@ -169,8 +169,8 @@ fn fix(grid: &[Vec<char>]) -> Vec<Vec<char>> {
         .par_windows(2)
         .enumerate()
         .map(|(irow, window)| {
-            let new_row1 = &window[0];
-            let new_row2 = &window[1];
+            let new_row1 = unsafe { window.get_unchecked(0) };
+            let new_row2 = unsafe { window.get_unchecked(1) };
             let mut new_row3 = Vec::with_capacity(new_row1.len());
 
             let mut last = if irow == 0 {
@@ -247,7 +247,7 @@ fn render(grid: &[Vec<char>]) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
         .collect();
 
     let cell_size: u32 = 16;
-    let width = grid[0].len() as u32 * cell_size;
+    let width = unsafe { grid.get_unchecked(0) }.len() as u32 * cell_size;
     let height = grid.len() as u32 * cell_size;
 
     let rendered_rows: Vec<RgbImage> = grid

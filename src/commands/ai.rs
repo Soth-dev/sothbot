@@ -1,6 +1,6 @@
 use crate::{edit, m, q, text};
 use dotenvy::dotenv;
-use gemini_rust::{ClientError::BadResponse, Gemini, Model};
+use gemini_rust::{Gemini, Model};
 use std::env;
 use teloxide::{prelude::*, types::ParseMode};
 
@@ -21,42 +21,48 @@ pub async fn run(bot: Bot, msg: Message, text: String) -> anyhow::Result<()> {
     }
     let msg2 = text!(bot, msg, q!(m!("Generating...")), ParseMode::Html).await?;
 
+    match ai(text, reply_text).await {
+        Err(e) => {
+            edit!(
+                bot,
+                msg,
+                msg2,
+                ">`Failed to generate...`".to_string(),
+                ParseMode::MarkdownV2
+            )
+            .await
+            .unwrap(); // 100% no err... i swear...
+            Err(e)
+        }
+        Ok(resp) => {
+            let text_resp = sanitize_markdown(resp);
+            println!("\n{}", text_resp);
+            if let Err(err) = edit!(bot, msg, msg2, text_resp, ParseMode::MarkdownV2).await {
+                edit!(
+                    bot,
+                    msg,
+                    msg2,
+                    q!(m!("Failed to generate...")),
+                    ParseMode::Html
+                )
+                .await?;
+                return Err(anyhow::Error::new(err));
+            }
+
+            Ok(())
+        }
+    }
+}
+
+async fn ai(text: String, reply_text: Option<&str>) -> anyhow::Result<String> {
     let mut content = GEMINI_CLIENT.create_interaction().with_text(text.trim());
     content = match reply_text {
         Some(t) => content.with_system_instruction(t),
         None => content,
     };
 
-    let response = match content.execute().await {
-        Ok(t) => t.output_text(),
-        Err(e) => {
-            dbg!(&e);
-            if let BadResponse { description, .. } = e {
-                println!(
-                    "{}",
-                    description
-                        .as_deref()
-                        .unwrap_or("Error: \x1b[91m(No details)\x1b[0m")
-                )
-            };
-            ">`Failed to generate...`".to_string()
-        }
-    };
-
-    let text_resp = sanitize_markdown(response);
-    println!("\n{}", text_resp);
-    if let Err(err) = edit!(bot, msg, msg2, text_resp, ParseMode::MarkdownV2).await {
-        dbg!(err);
-        edit!(
-            bot,
-            msg,
-            msg2,
-            q!(m!("Failed to generate...")),
-            ParseMode::Html
-        )
-        .await?;
-    }
-    Ok(())
+    let response = content.execute().await?.output_text();
+    Ok(response)
 }
 
 fn sanitize_markdown(text: String) -> String {
