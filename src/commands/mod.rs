@@ -30,10 +30,12 @@ pub enum Command {
     Md { text: String },
     #[command(description = "Meowing for you.")]
     Meow,
-    #[command(description = "Print info msg to terminal.")]
+    #[command(description = "!Print info msg to terminal.")]
     Info,
     #[command(description = "Source code link.")]
     Source,
+    #[command(description = "List games..")]
+    Games,
 }
 
 pub async fn router(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
@@ -52,6 +54,7 @@ async fn command_router(bot: Bot, msg: Message, cmd: Command) -> anyhow::Result<
         Command::Meow => meow::run(bot, msg).await,
         Command::Info => info::run(bot, msg).await,
         Command::Source => source::run(bot, msg).await,
+        Command::Games => games::run(bot, msg).await,
         Command::Help => help::run(bot, msg, Command::descriptions()).await,
         Command::Echo { text } => echo::run(bot, msg, text).await,
         Command::Ai { text } => ai::run(bot, msg, text).await,

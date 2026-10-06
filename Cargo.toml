@@ -29,3 +29,4 @@ opt-level = 3 # "s" for smaller size
 #codegen-units = 1
 panic = "unwind"
 rpath = true
+debug = false
